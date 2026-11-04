@@ -6,8 +6,14 @@ on:
     - cron: '0 16 * * *'
   # 支持在 Actions 页面手动触发
   workflow_dispatch:
-  # 打 tag（如 v1.0）时也编译一份，附到对应的 release
+  # 正文或构建脚本有改动就重新编译，推送后自动产出 PDF
   push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - '.github/workflows/build.yml'
+    # 打 tag（如 v1.0）时也编译一份，附到对应的 release
     tags:
       - 'v*'
 
