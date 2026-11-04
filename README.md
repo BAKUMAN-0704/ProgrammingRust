@@ -29,7 +29,7 @@ https://github.com/BAKUMAN-0704/ProgrammingRust/releases/latest/download/Program
 
 ## 在线阅读
 
-见[前言](https://meousker77.github.io/ProgrammingRust/index.html)
+见[前言](https://bakuman-0704.github.io/ProgrammingRust/index.html)
 
 感谢 @knowaywood 提供了静态网站的部署方案。
 
