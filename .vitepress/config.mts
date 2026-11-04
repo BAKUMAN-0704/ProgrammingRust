@@ -1,11 +1,14 @@
 import { defineConfig } from 'vitepress'
 import footnote from 'markdown-it-footnote'
 
+// 站点挂在 https://<user>.github.io/ProgrammingRust/ 下，改仓库名时只需改这一处
+const SITE_BASE = '/ProgrammingRust/'
+
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Programming Rust',
   description: '《Programming Rust - Fast, Safe Systems Development》第二版 中文翻译',
-  base: '/ProgrammingRust/',
+  base: SITE_BASE,
   lastUpdated: true,
   cleanUrls: true,
   srcDir: 'site-src',
@@ -18,6 +21,26 @@ export default defineConfig({
   ignoreDeadLinks: [/localhost/],
   rewrites: {
     'preface.md': 'index.md',
+  },
+  // 本地 dev 时，访问 /ProgrammingRust（结尾少一个斜杠）会被 Vite 直接 404。
+  // 加一个只作用于 dev 的中间件，自动补斜杠，避免地址栏省略斜杠时打不开。
+  vite: {
+    plugins: [
+      {
+        name: 'dev-base-trailing-slash',
+        apply: 'serve',
+        configureServer(server: any) {
+          const bare = SITE_BASE.replace(/\/$/, '')
+          server.middlewares.use((req: any, _res: any, next: any) => {
+            const url: string = req.url || ''
+            if (url === bare || url.startsWith(bare + '?')) {
+              req.url = SITE_BASE + url.slice(bare.length)
+            }
+            next()
+          })
+        },
+      },
+    ],
   },
   themeConfig: {
     siteTitle: 'Programming Rust',
