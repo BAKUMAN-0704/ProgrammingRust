@@ -13,8 +13,8 @@ cat > "$MACROS" <<'EOF'
 \newenvironment{note}{\begin{quote}\textbf{NOTE}: }{\end{quote}}
 EOF
 
-rm -rf "$SRC"
 mkdir -p "$SRC/public/img"
+rm -f "$SRC"/*.md
 
 convert() {
   "$PANDOC" -f latex -t gfm --wrap=none "$MACROS" "$1" -o "$2"
