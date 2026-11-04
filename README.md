@@ -85,3 +85,23 @@ npm run preview
 
 > 提示：本地预览请用 `npm run preview` 或 `npm run dev`，不要用 `python -m http.server`，
 > 因为站点配置了 `base`（`/ProgrammingRust/`），直接 serve dist 会丢失样式和资源。
+
+### 字体
+
+站点字体是自托管的，放在 `.vitepress/theme/fonts/`：正文 HarmonyOS Sans SC（400/500/700），
+代码 JetBrainsMono Nerd Font Mono（400/700）。
+
+字体只保留了站点实际用到的字符，所以体积很小（整体约 0.6 MB）。**新增章节后**如果出现个别字
+回退成系统字体，重新生成一次即可：
+
+```bash
+py -3 -m pip install fonttools brotli
+py -3 scripts/subset-fonts.py
+```
+
+或者直接双击仓库根目录的 **`update-fonts.bat`**：它会自动挑选解释器、缺依赖时自动安装、
+出错时停住窗口显示原因。
+
+> 用 `py -3` 而不是 `python`：Windows 上 `python` 可能指向别的解释器（例如某些工具自带的），
+> 而 `pip` 又指向另一个，会出现“装完却 import 不到”。`py -3` 由系统启动器统一解析，
+> 装包和跑脚本一定是同一个环境。没有 `py` 启动器时，请确保两条命令用的是**同一个** `python`。

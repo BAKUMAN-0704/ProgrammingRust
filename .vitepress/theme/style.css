@@ -1,16 +1,59 @@
+/* 自托管字体，按字重拆成独立文件。浏览器只会下载页面实际渲染到的字重，
+   没用到粗体的页面不会去拉 700。字符集由 scripts/subset-fonts.py 生成，
+   只包含站点正文与界面文案里出现过的字，新增章节后记得重跑一次。 */
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./fonts/harmonyos-sans-sc-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./fonts/harmonyos-sans-sc-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./fonts/harmonyos-sans-sc-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrainsMono Nerd Font Mono";
+  src: url("./fonts/jetbrainsmono-nf-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrainsMono Nerd Font Mono";
+  src: url("./fonts/jetbrainsmono-nf-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --vp-c-brand-1: #2980b9;
   --vp-c-brand-2: #3498db;
   --vp-c-brand-3: #2980b9;
   --vp-c-brand-soft: rgba(52, 152, 219, 0.16);
 
-  --vp-font-family-base: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "SimSun", Georgia, serif;
-  --vp-font-family-mono: "Inconsolata", "JetBrains Mono", Consolas, monospace;
+  --vp-font-family-base: "HarmonyOS Sans SC", "HarmonyOS Sans", -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --vp-font-family-mono: "JetBrainsMono Nerd Font Mono", "JetBrainsMono NFM", "JetBrains Mono", Consolas, "Courier New", monospace;
 
   --vp-sidebar-width: 300px;
 }
 
-:root {
+/* 浅色模式配色。必须用 :not(.dark) 排除黑夜模式，
+   否则这里的 :root 与 VitePress 的 .dark 优先级相同但位置更靠后，
+   会把暗色背景变量覆盖成白色，导致白底浅字。 */
+:root:not(.dark) {
   color-scheme: light;
   --vp-c-bg: #ffffff;
   --vp-c-bg-alt: #f6f8fa;
@@ -18,6 +61,7 @@
   --vp-c-divider: #e1e4e8;
 }
 
+/* 黑夜模式沿用 VitePress 自带配色，仅声明 color-scheme */
 :root.dark {
   color-scheme: dark;
 }
@@ -97,6 +141,18 @@
   margin-top: 0.5rem;
   color: var(--vp-c-text-2);
   font-size: 0.9rem;
+}
+
+/* 黑夜模式下的插图：书里的图多是白底或透明底，纯白在深色页面上很刺眼。
+   给一层白色衬底保证透明图可读，再用 brightness 整体压低亮度，
+   使纯白约降到 #d9d9d9；悬停时恢复原亮度方便看清细节。 */
+.dark .vp-doc img {
+  background: #ffffff;
+  filter: brightness(0.85);
+  transition: filter 0.2s ease;
+}
+.dark .vp-doc img:hover {
+  filter: brightness(1);
 }
 
 /* 表格 */
