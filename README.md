@@ -2,6 +2,12 @@
 
 本书为《Programming Rust - Fast, Safe Systems Development》第2版的个人中文翻译，仅供学习和交流使用，如有侵权请联系作者删除
 
+## 致谢
+
+- 感谢 **Jim Blandy**、**Jason Orendorff**、**Leonora F.S. Tindall** 撰写本书，感谢 O'Reilly Media 出版。原书是本书全部内容的来源，如果本书对你有帮助，请购买正版支持作者。
+- 感谢 **汪屹硕（[@MeouSker77](https://github.com/MeouSker77)）** 完成全书的中文翻译并开源。本仓库的内容基于他的译文仓库 [MeouSker77/ProgrammingRust](https://github.com/MeouSker77/ProgrammingRust)，格式与站点方案在此基础上整理。
+- 感谢 [@knowaywood](https://github.com/knowaywood) 提供第 17 章的 LaTeX 译文以及静态站点的部署方案。
+
 ## 以下为英文原版购买地址
 
 * 电子版[购买地址](https://www.amazon.com/-/zh/dp-B0979PWD4Z/dp/B0979PWD4Z/ref=mt_other?_encoding=UTF8&me=&qid=)
