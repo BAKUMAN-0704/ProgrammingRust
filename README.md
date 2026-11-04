@@ -17,7 +17,13 @@
 
 ## 下载（pdf）
 
-见[Nightly Build](https://github.com/MeouSker77/ProgrammingRust/releases/tag/v0.99)
+见 [Releases](https://github.com/BAKUMAN-0704/ProgrammingRust/releases/latest)，由 GitHub Actions 每天自动编译。
+
+固定直链（永远指向最新一版）：
+
+```
+https://github.com/BAKUMAN-0704/ProgrammingRust/releases/latest/download/ProgrammingRust.pdf
+```
 
 ---
 
