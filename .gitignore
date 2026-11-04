@@ -1,7 +1,26 @@
+# LaTeX 源文件：只保留 .tex，编译产物（pdf/aux/log 等）一律忽略
 src/*
 !src/*.tex
+
+# 站点构建产物
+node_modules/
 site-src/
 dist/
-node_modules/
 .vitepress/cache/
 .vitepress/dist/
+
+# 字体子集化脚本产生的临时字符集（正常结束会自动删除）
+.font-charset*.txt
+
+# Python
+__pycache__/
+*.pyc
+
+# 本机环境：.npmrc 里是 Git Bash 的绝对路径，换机器就要改
+.npmrc
+.workbuddy/
+
+# 系统与编辑器
+Thumbs.db
+desktop.ini
+.DS_Store
