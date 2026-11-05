@@ -27,9 +27,13 @@ r"""按站点实际用到的字符，把 HarmonyOS Sans SC 与 JetBrains Mono �
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+CODE_FENCE = re.compile(r"```.*?```", re.S)
+INLINE_CODE = re.compile(r"`[^`\n]+`")
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = ROOT / "site-src"
@@ -46,9 +50,11 @@ HARMONY_WEIGHTS = [
     (700, "HarmonyOS_Sans_SC_Bold.ttf", "harmonyos-sans-sc-700.woff2"),
 ]
 
-JETBRAINS_WEIGHTS = [
-    (400, "JetBrainsMonoNerdFontMono-Regular.ttf", "jetbrainsmono-nf-400.woff2"),
-    (700, "JetBrainsMonoNerdFontMono-Bold.ttf", "jetbrainsmono-nf-700.woff2"),
+JETBRAINS_FACES = [
+    (400, "normal", "JetBrainsMonoNerdFontMono-Regular.ttf", "jetbrainsmono-nf-400.woff2"),
+    (400, "italic", "JetBrainsMonoNerdFontMono-Italic.ttf", "jetbrainsmono-nf-400-italic.woff2"),
+    (700, "normal", "JetBrainsMonoNerdFontMono-Bold.ttf", "jetbrainsmono-nf-700.woff2"),
+    (700, "italic", "JetBrainsMonoNerdFontMono-BoldItalic.ttf", "jetbrainsmono-nf-700-italic.woff2"),
 ]
 
 # 界面文案兜底：VitePress 自带的中文 UI 里可能出现的字
@@ -106,12 +112,25 @@ def collect_text() -> str:
 
 
 def collect_mono() -> str:
-    """等宽字体只需覆盖代码字符：ASCII、制表符、常用符号与箭头。"""
+    """等宽字体覆盖代码字符：ASCII、制表符、常用符号，以及代码里实际出现的非 ASCII 字符。
+
+    代码块里的中文注释不在 JetBrains Mono 的字形表里，pyftsubset 会自动跳过，
+    最终由 CSS 字体栈里的 HarmonyOS Sans SC 兜底。
+    """
     chars = {chr(c) for c in range(0x20, 0x7F)}
     for lo, hi in ((0x2500, 0x257F), (0x2190, 0x21FF), (0x2502, 0x2502), (0x2026, 0x2026)):
         chars.update(chr(c) for c in range(lo, hi + 1))
     chars.update("→←↑↓✓✗⚠─│┌┐└┘├┤┬┴┼█▌▐░▒▓")
-    return "".join(sorted(chars))
+
+    if SRC_DIR.is_dir():
+        for md in sorted(SRC_DIR.glob("*.md")):
+            text = md.read_text(encoding="utf-8")
+            for block in CODE_FENCE.findall(text):
+                chars.update(block)
+            for span in INLINE_CODE.findall(text):
+                chars.update(span)
+
+    return "".join(sorted(c for c in chars if ord(c) >= 0x20 and not c.isspace()))
 
 
 def subset(src: Path, dst: Path, text_path: Path, *, keep_ligatures: bool) -> None:
@@ -151,10 +170,10 @@ def main() -> None:
         size = (OUT_DIR / out).stat().st_size / 1024
         print(f"  HarmonyOS Sans SC {weight}  ->  {out}  {size:.0f} KB")
 
-    for weight, name, out in JETBRAINS_WEIGHTS:
+    for weight, style, name, out in JETBRAINS_FACES:
         subset(JETBRAINS_DIR / name, OUT_DIR / out, tmp_mono, keep_ligatures=True)
         size = (OUT_DIR / out).stat().st_size / 1024
-        print(f"  JetBrains Mono NF {weight}  ->  {out}  {size:.0f} KB")
+        print(f"  JetBrains Mono NF {weight} {style:<6} ->  {out}  {size:.0f} KB")
 
     tmp.unlink(missing_ok=True)
     tmp_mono.unlink(missing_ok=True)

@@ -37,6 +37,21 @@
   font-style: normal;
   font-display: swap;
 }
+/* 斜体单独提供字面，否则浏览器会强行倾斜正体，字形会发虚 */
+@font-face {
+  font-family: "JetBrainsMono Nerd Font Mono";
+  src: url("./fonts/jetbrainsmono-nf-400-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrainsMono Nerd Font Mono";
+  src: url("./fonts/jetbrainsmono-nf-700-italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 :root {
   --vp-c-brand-1: #2980b9;
@@ -45,7 +60,9 @@
   --vp-c-brand-soft: rgba(52, 152, 219, 0.16);
 
   --vp-font-family-base: "HarmonyOS Sans SC", "HarmonyOS Sans", -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
-  --vp-font-family-mono: "JetBrainsMono Nerd Font Mono", "JetBrainsMono NFM", "JetBrains Mono", Consolas, "Courier New", monospace;
+  /* JetBrains Mono 不含中文字形，代码里的中文注释会回退到 HarmonyOS Sans SC，
+     避免掉到系统默认字体、和旁边的代码字重字宽都不搭 */
+  --vp-font-family-mono: "JetBrainsMono Nerd Font Mono", "JetBrainsMono NFM", "JetBrains Mono", Consolas, "HarmonyOS Sans SC", "Courier New", monospace;
 
   --vp-sidebar-width: 300px;
 }
