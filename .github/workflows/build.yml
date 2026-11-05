@@ -6,12 +6,11 @@ on:
     - cron: '0 16 * * *'
   # 支持在 Actions 页面手动触发
   workflow_dispatch:
-  # 正文或构建脚本有改动就重新编译，推送后自动产出 PDF
+  # 只监听真正影响 PDF 的内容：LaTeX 源码本身，以及这个工作流自己
   push:
     branches: [main]
     paths:
       - 'src/**'
-      - 'scripts/**'
       - '.github/workflows/build.yml'
     # 打 tag（如 v1.0）时也编译一份，附到对应的 release
     tags:
