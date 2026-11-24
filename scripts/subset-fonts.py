@@ -57,6 +57,12 @@ JETBRAINS_FACES = [
     (700, "italic", "JetBrainsMonoNerdFontMono-BoldItalic.ttf", "jetbrainsmono-nf-700-italic.woff2"),
 ]
 
+# HarmonyOS Sans SC 不含国际音标（29k 字形里没有 ɜ / ː），译文用它注音时会掉到系统字体。
+# 仓库里的 DejaVuSans 覆盖完整 IPA，切一份几百字节的兜底字体，保证任何机器上注音都一致。
+IPA_SRC = ROOT / "fonts" / "DejaVuSans.ttf"
+IPA_OUT = "ipa-fallback.woff2"
+IPA_RANGE = range(0x0250, 0x0300)
+
 # 界面文案兜底：VitePress 自带的中文 UI 里可能出现的字
 UI_FALLBACK = (
     "目录本页回到顶部上下一最后更新主题搜索菜单外观深色浅色模式切换复制代码已"
@@ -93,11 +99,17 @@ def collect_text() -> str:
     """收齐所有会被渲染出来的字符。"""
     chars: set[str] = set()
 
+    # site-src 是构建产物，没构建过也不影响：下面的 tex 兜底能覆盖正文
     if not SRC_DIR.is_dir():
-        sys.exit(f"找不到 {SRC_DIR}，请先运行 npm run dev 或 npm run build 生成 markdown")
+        print(f"提示：{SRC_DIR} 不存在，仅按 LaTeX 源码收集字符")
 
     for md in sorted(SRC_DIR.glob("*.md")):
         chars.update(md.read_text(encoding="utf-8"))
+
+    # 同时读 LaTeX 源码：site-src 是构建产物，可能比 tex 旧；
+    # 只读 md 的话，刚改完正文还没重新构建时，新出现的字会被漏掉。
+    for tex in sorted((ROOT / "src").glob("*.tex")):
+        chars.update(tex.read_text(encoding="utf-8"))
 
     # 侧边栏、页脚等界面文案写在配置里，不在 markdown 里
     if CONFIG.is_file():
@@ -106,6 +118,10 @@ def collect_text() -> str:
     chars.update(UI_FALLBACK)
     chars.update(PUNCTUATION)
     chars.update(chr(c) for c in range(0x20, 0x7F))
+
+    # 国际音标与修饰字母：译文里会用它标注读音（如 /stɜːr/），体积很小，整段收进来
+    chars.update(chr(c) for c in range(0x0250, 0x02B0))
+    chars.update(chr(c) for c in range(0x02B0, 0x0300))
 
     # 去掉空白、控制字符，以及配置里的代码符号（用不到那么多）
     return "".join(sorted(c for c in chars if ord(c) >= 0x20 and not c.isspace()))
@@ -174,6 +190,13 @@ def main() -> None:
         subset(JETBRAINS_DIR / name, OUT_DIR / out, tmp_mono, keep_ligatures=True)
         size = (OUT_DIR / out).stat().st_size / 1024
         print(f"  JetBrains Mono NF {weight} {style:<6} ->  {out}  {size:.0f} KB")
+
+    tmp_ipa = ROOT / ".font-charset-ipa.txt"
+    tmp_ipa.write_text("".join(chr(c) for c in IPA_RANGE), encoding="utf-8")
+    subset(IPA_SRC, OUT_DIR / IPA_OUT, tmp_ipa, keep_ligatures=False)
+    size = (OUT_DIR / IPA_OUT).stat().st_size / 1024
+    print(f"  DejaVu Sans IPA        ->  {IPA_OUT}  {size:.1f} KB")
+    tmp_ipa.unlink(missing_ok=True)
 
     tmp.unlink(missing_ok=True)
     tmp_mono.unlink(missing_ok=True)

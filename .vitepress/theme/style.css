@@ -53,13 +53,23 @@
   font-display: swap;
 }
 
+/* 国际音标兜底：HarmonyOS Sans SC 没有 ɜ / ː 这类字符，
+   用仓库里的 DejaVu Sans 切一份，保证 /stɜːr/ 这样的注音在任何机器上一致 */
+@font-face {
+  font-family: "IPA Fallback";
+  src: url("./fonts/ipa-fallback.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --vp-c-brand-1: #2980b9;
   --vp-c-brand-2: #3498db;
   --vp-c-brand-3: #2980b9;
   --vp-c-brand-soft: rgba(52, 152, 219, 0.16);
 
-  --vp-font-family-base: "HarmonyOS Sans SC", "HarmonyOS Sans", -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --vp-font-family-base: "HarmonyOS Sans SC", "IPA Fallback", "HarmonyOS Sans", -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
   /* JetBrains Mono 不含中文字形，代码里的中文注释会回退到 HarmonyOS Sans SC，
      避免掉到系统默认字体、和旁边的代码字重字宽都不搭 */
   --vp-font-family-mono: "JetBrainsMono Nerd Font Mono", "JetBrainsMono NFM", "JetBrains Mono", Consolas, "HarmonyOS Sans SC", "Courier New", monospace;
